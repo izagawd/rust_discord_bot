@@ -4,3 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+quote = "1.0.37"
+syn = "2.0.85"
+reflect = "0.0.14"
+nalgebra = "0.33.1"
+gl = "0.14.0"
+[lib]
+proc-macro = true
