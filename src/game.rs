@@ -3,6 +3,7 @@ use std::rc::Rc;
 use crate::world::World;
 use crate::za_muts::RcMut;
 
+
 trait Game{
     fn render(&self);
     fn get_world(&self) -> Option<RcMut<dyn World>>;
@@ -21,6 +22,7 @@ impl Game for GameImpl{
     }
 }
 impl GameImpl{
+
 
     fn new() -> GameImpl{
         GameImpl{world:None}

@@ -1,32 +1,50 @@
-use std::cell::RefCell;
-use std::os::raw::c_int;
-use std::rc::Rc;
-use nalgebra::coordinates::M4x4;
-use nalgebra::{Quaternion, Vector3};
+use nalgebra::Vector3;
+use crate::game_node::*;
+use crate::rotation::Rotation;
+use crate::transform::Transform;
 
-pub struct  Transform<T>{
-    translation: Vector3<T>,
-    scale: Vector3<T>,
-    rotation: Vector3<T>,
+pub struct SceneGameNodeImpl{
+    parent: GameNodeImpl,
+    local_transform: Transform<f32>
 }
-impl <T> Transform<T>{
-    pub fn new(translation: Vector3<T>, scale: Vector3<T>, rotation: Vector3<T>) -> Transform<T>{
-        Transform{translation, scale, rotation}
+
+impl GameNode for SceneGameNodeImpl {
+    fn get_game_node_impl(&self) -> &GameNodeImpl {
+        &self.parent
+    }
+
+    fn get_game_node_impl_mut(&mut self) -> &mut GameNodeImpl {
+        &mut self.parent
+    }
+
+    fn new() -> Self
+    where
+        Self: Sized
+    {
+        SceneGameNodeImpl{
+            parent: GameNodeImpl::new(),
+            local_transform: Transform::new(Vector3::new(0.0, 0.0, 0.0),
+                                            Vector3::new(1.0,1.0,1.0),
+                                            Rotation::new(0.0,0.0,0.0))}
     }
 }
-impl<T: Copy> Clone for Transform<T> {
-    fn clone(&self) -> Self {
-        Transform::new(self.translation, self.scale, self.rotation)
+
+impl SceneGameNode for SceneGameNodeImpl {
+
+    fn get_scene_game_node_impl(&self) -> &SceneGameNodeImpl {
+        self
+    }
+    fn get_scene_game_node_impl_mut(&mut self) -> &mut SceneGameNodeImpl {
+        self
     }
 }
-
-impl<T: Copy> Copy for Transform<T>{
-
-}
-fn idk(){
-
-    let mut idk = Transform::new(
-        Vector3::new(1.0, 1.0, 1.0), Vector3::new(1.0, 1.0, 1.0), Vector3::new(1.0, 1.0, 1.0));
-    let mut bruh = idk;
-    println!("{}", idk.rotation.x);
+pub trait SceneGameNode : GameNode{
+    fn local_transform(&self) -> &Transform<f32>{
+        &self.get_scene_game_node_impl().local_transform
+    }
+    fn local_transform_mut(&mut self) -> &mut Transform<f32>{
+        &mut self.get_scene_game_node_impl_mut().local_transform
+    }
+    fn get_scene_game_node_impl(&self) -> &SceneGameNodeImpl;
+    fn get_scene_game_node_impl_mut(&mut self) -> &mut SceneGameNodeImpl;
 }

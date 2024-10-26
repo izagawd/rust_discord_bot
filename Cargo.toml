@@ -1,13 +1,11 @@
+
+cargo-features = ["edition2024","test-dummy-unstable"]
 [package]
 name = "rust-test"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-quote = "1.0.37"
-syn = "2.0.85"
-reflect = "0.0.14"
+
 nalgebra = "0.33.1"
 gl = "0.14.0"
-[lib]
-proc-macro = true
