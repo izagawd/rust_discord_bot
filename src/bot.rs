@@ -1,15 +1,48 @@
+use std::cmp::PartialEq;
+use std::fmt::Display;
 use poise::async_trait;
-use poise::samples::help;
+
 use serenity::all::{EventHandler, GatewayIntents};
 use serenity::Client;
 use serenity::model::error::Error;
 
 
-
-
 pub type CommandRetType = Result<(), Error>;
 pub type ContextToUse<'a> = poise::Context<'a, (), Error>;
+#[derive(Clone, PartialEq,Eq)]
+pub enum CommandType{
+    Other,
+    Game
+}
 
+
+
+impl Display for CommandType{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if  CommandType::Other == *self{
+            return write!(f, "Other");
+        } else if CommandType::Game == *self{
+            return write!(f, "Fun");
+        } else{
+            panic!("Unknown command");
+        }
+    }
+}
+#[derive(Clone)]
+pub struct AdditionalCommandDetails{
+     pub command_type: CommandType,
+}
+
+impl AdditionalCommandDetails{
+    pub const  fn new(command_type: CommandType) -> AdditionalCommandDetails{
+        AdditionalCommandDetails{command_type}
+    }
+}
+impl Default for AdditionalCommandDetails{
+    fn default() -> AdditionalCommandDetails{
+        AdditionalCommandDetails{command_type: CommandType::Other}
+    }
+}
 pub async fn start() {
     let token ="OTYxNDA1NTYzODgxNzg3Mzky.GsXd_v.rf36oVKhf-1xqZJN1p7a-ZPGcL5Dxnjs2awaow";
     // Set gateway intents, which decides what events the bot will be notified about
@@ -19,7 +52,8 @@ pub async fn start() {
 
 
         .options(poise::FrameworkOptions {
-            commands:  vec![crate::help::help()],
+            commands:  vec![crate::help::help(), crate::ping::ping(),
+            crate::rps::rps()],
 
             prefix_options: poise::PrefixFrameworkOptions{
 
