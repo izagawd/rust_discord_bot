@@ -13,6 +13,6 @@ tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros", "tim
 serenity = "0.12.2"
 time = "0.3.36"
 poise = "0.6.1"
-
+rand = { version = "0.8.5", features = [] }
 syn = "1.0"
 quote = "1.0"

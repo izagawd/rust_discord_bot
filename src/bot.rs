@@ -9,7 +9,7 @@ use serenity::model::error::Error;
 
 pub type CommandRetType = Result<(), Error>;
 pub type ContextToUse<'a> = poise::Context<'a, (), Error>;
-#[derive(Clone, PartialEq,Eq)]
+#[derive(Clone, PartialEq,Eq, Debug)]
 pub enum CommandType{
     Other,
     Game
@@ -19,13 +19,7 @@ pub enum CommandType{
 
 impl Display for CommandType{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if  CommandType::Other == *self{
-            return write!(f, "Other");
-        } else if CommandType::Game == *self{
-            return write!(f, "Fun");
-        } else{
-            panic!("Unknown command");
-        }
+        write!(f, "{:?}", self)
     }
 }
 #[derive(Clone)]

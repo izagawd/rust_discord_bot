@@ -1384,6 +1384,7 @@ dependencies = [
  "nalgebra",
  "poise",
  "quote",
+ "rand",
  "serenity",
  "syn 1.0.109",
  "time",

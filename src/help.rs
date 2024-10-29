@@ -1,6 +1,6 @@
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 use poise::CreateReply;
-use serenity::all::Colour;
+use serenity::all::{Colour, CreateEmbedAuthor};
 use serenity::builder::CreateEmbed;
 
 
@@ -45,7 +45,10 @@ pub async fn help(
     available_comm_types.dedup();
     let mut embed_to_make =CreateEmbed::new()
         .title("Commands")
-        .color(Colour::BLUE);
+        .color(Colour::BLUE)
+        .author(CreateEmbedAuthor::new(ctx.author().name.clone())
+            .icon_url(ctx.author().avatar_url()
+                .unwrap_or_else(|| ctx.author().default_avatar_url())));
     for i in available_comm_types {
         let commands_under =
         commands_name_descr_mapped
