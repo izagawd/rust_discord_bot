@@ -31,6 +31,6 @@ pub fn register_type<T: Sized + bevy_reflect::GetTypeRegistration>(){
         the_register.unwrap().register::<T>();
 
     } else{
-        panic!("This thread has caused an error")
+        panic!("This thread has caused an error. this is not supposed to happen")
     }
 }
