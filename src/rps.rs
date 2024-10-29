@@ -1,9 +1,9 @@
 
 use std::fmt::Display;
 use std::str::FromStr;
-use poise::{CreateReply, ReplyHandle};
-use rand::{random, Rng};
-use serenity::all::{Color, Colour, CreateEmbed, CreateEmbedAuthor};
+use poise::{CreateReply};
+use rand::{ Rng};
+use serenity::all::{Color,  CreateEmbed, CreateEmbedAuthor};
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 
 
