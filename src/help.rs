@@ -55,7 +55,7 @@ pub async fn help(
             .clone()
             .filter(|x| x.custom_data.command_type == i)
             .map(|x|
-            x.name.to_owned() + &x.description.clone().map(|y| ": ".to_owned()+ &y)
+            x.name.clone() + &x.description.clone().map(|y| ": ".to_owned()+ &y)
                 .unwrap_or(String::new()))
             .collect::<Vec<String>>();
 
