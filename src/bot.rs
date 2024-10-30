@@ -9,7 +9,7 @@ use serenity::model::error::Error;
 
 pub type CommandRetType = Result<(), Error>;
 pub type ContextToUse<'a> = poise::Context<'a, (), Error>;
-#[derive(Clone, PartialEq,Eq, Debug)]
+#[derive(Clone,Copy, PartialEq,Eq, Debug)]
 pub enum CommandType{
     Other,
     Game
@@ -29,12 +29,15 @@ pub struct AdditionalCommandDetails{
 
 impl AdditionalCommandDetails{
     pub const  fn new(command_type: CommandType) -> AdditionalCommandDetails{
-        AdditionalCommandDetails{command_type}
+        Self{command_type}
+    }
+    pub const fn default() -> Self{
+        Self::new(CommandType::Other)
     }
 }
 impl Default for AdditionalCommandDetails{
-    fn default() -> AdditionalCommandDetails{
-        AdditionalCommandDetails{command_type: CommandType::Other}
+    fn default() -> Self{
+        AdditionalCommandDetails::default()
     }
 }
 pub async fn start() {

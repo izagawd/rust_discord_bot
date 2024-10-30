@@ -1,6 +1,5 @@
 #![feature(gen_blocks)]
 #![feature(trait_upcasting)]
-
 use bevy_reflect::{FromType, GetField, Reflect, TypeData};
 
 use std::any::Any;

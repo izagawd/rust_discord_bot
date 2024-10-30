@@ -22,8 +22,9 @@ pub async fn help(
     struct NamenDescr<'a>{
         pub name: &'a String,
         pub description: &'a Option<String>,
-        pub custom_data : AdditionalCommandDetails,
+        pub custom_data : &'a AdditionalCommandDetails,
     }
+    static DEFAULT_ADD_COMMS: AdditionalCommandDetails = AdditionalCommandDetails::default();
     let commands_name_descr_mapped = ctx
         .framework()
         .options()
@@ -32,10 +33,9 @@ pub async fn help(
         .map(|x| NamenDescr{
             name: &x.name,
             description: &x.description,
-            custom_data: x.custom_data
+            custom_data: &x.custom_data
                 .downcast_ref::<AdditionalCommandDetails>()
-                .unwrap_or(&AdditionalCommandDetails::default())
-                .clone()
+                .unwrap_or(&DEFAULT_ADD_COMMS)
         });
 
     let mut available_comm_types = commands_name_descr_mapped
