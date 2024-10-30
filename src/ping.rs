@@ -8,7 +8,7 @@ showrr
 */
 pub async fn ping(
     ctx: ContextToUse<'_>) -> CommandRetType {
-   ctx.say("Pong!").await.expect("TODO: panic message");
+    _ = ctx.say("Pong!").await;
 
 
     Ok(())
