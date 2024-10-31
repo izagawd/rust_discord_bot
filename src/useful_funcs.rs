@@ -17,7 +17,7 @@ pub fn get_reflect_type<TReflectType: std::marker::Send + std::marker::Sync + st
         if data.is_some(){
             return Ok(data.unwrap().clone());
         }else{
-            return Err(String::from("Inputted type not registered"))
+            return Err(String::from("Inputted trait not registered for inputted object"))
         }
     } else{
         return Err(String::from("Another thread has caused an error"));
