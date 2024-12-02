@@ -1,5 +1,5 @@
 
-cargo-features = ["edition2024","test-dummy-unstable"]
+cargo-features = ["test-dummy-unstable"]
 [package]
 name = "rust_discord_bot"
 version = "0.1.0"

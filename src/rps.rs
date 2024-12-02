@@ -97,7 +97,7 @@ pub async fn rps(
 
     let options = [ RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors];
 
-    let random_choice = options[rand::thread_rng().gen_range(0..options.len())];
+    let random_choice = options[rand::rng().random_range(0..options.len())];
 
 
     let mut confront_text = "I winn >:)";
