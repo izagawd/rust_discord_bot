@@ -17,31 +17,31 @@ impl Display for XO {
         Debug::fmt(self, f)
     }
 }
-
-pub struct GameSimulator<'a>{
+pub struct GameSimulator<'a,const width: usize, const height: usize> {
     player_one: &'a User,
     player_two_user_id: Option<&'a User>,
-    board: Vec<Vec<Option<XO>>>,
+    board: [[Option<XO>; width ]; height ],
     turn_taker: XO,
     number_to_win: u8,
     context: ContextToUse<'a>
 }
 
-
-impl<'a> GameSimulator<'a>{
-    fn new_basic(user: &'a User, context_to_use: ContextToUse<'a>) -> GameSimulator<'a>{
-        GameSimulator::new(3,3,*random_choice([XO::O,XO::X].iter()).unwrap(),
+impl<'a> GameSimulator<'a,3,3>{
+    fn new_basic(user: &'a User, context_to_use: ContextToUse<'a>) -> GameSimulator<'a,3,3>{
+        GameSimulator::new(*random_choice([XO::O,XO::X].iter()).unwrap(),
                            3,user,
-        context_to_use)
+                           context_to_use)
     }
-    fn new(width: u8, height: u8, initial_turn_taker: XO, number_to_win: u8,
-           user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a>{
-        let mut vec = Vec::with_capacity(width as usize);
-        vec.resize(width as usize, vec![None; height as usize]);
+}
+impl<'a,const width: usize, const height: usize> GameSimulator<'a, width,height>{
+
+    fn new(initial_turn_taker: XO, number_to_win: u8,
+           user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a,width,height>{
+
         GameSimulator{
             player_one: user,
             player_two_user_id: None,
-            board: vec,
+            board: [[None; width]; height ],
             turn_taker: initial_turn_taker,
             number_to_win: number_to_win,
             context: ctx
