@@ -28,16 +28,10 @@ pub struct GameSimulator<'a> {
     context: ContextToUse<'a>
 }
 
-impl<'a> GameSimulator<'a>{
-    fn new_basic(user: &'a User, context_to_use: ContextToUse<'a>) -> GameSimulator<'a>{
-        GameSimulator::new(3,3,*random_choice([XO::O,XO::X].iter()).unwrap(),
-                           3,user,
-                           context_to_use)
-    }
-}
-impl<'a,const width: usize, const height: usize> GameSimulator<'a>{
 
-    fn new(width: i32, height: i32, initial_turn_taker: XO, number_to_win: u8,
+impl<'a> GameSimulator<'a>{
+
+    fn new(width: i32, height: i32,  number_to_win: u8,
            user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a>{
 
         GameSimulator{
@@ -46,7 +40,7 @@ impl<'a,const width: usize, const height: usize> GameSimulator<'a>{
             player_one: user,
             player_two_user_id: None,
             board: [[None; 5];  5],
-            turn_taker: initial_turn_taker,
+            turn_taker: *random_choice([XO::O,XO::X].iter()).unwrap(),
             number_to_win: number_to_win,
             context: ctx
         }
@@ -128,8 +122,8 @@ impl<'a,const width: usize, const height: usize> GameSimulator<'a>{
     }
     pub async fn display_battle_state(&self) {
         let mut to_work_with = String::new();
-        for i in self.board.iter(){
-            for j in i.iter(){
+        for i in self.board.iter().take(self.height as usize){
+            for j in i.iter().take(self.width as usize){
                 if let Some(gotten) = j{
                    to_work_with.push_str(&gotten.to_string());
                     to_work_with.push_str(" ");
@@ -209,8 +203,9 @@ static CUSTOM_DATA: AdditionalCommandDetails =
 Play tic tac toe with ur friend
 */
 pub async fn tic_tac_toe(
-    ctx: ContextToUse<'_>) -> CommandRetType {
+    ctx: ContextToUse<'_>, width: Option<i32>, height: Option<i32>) -> CommandRetType {
 
-    GameSimulator::new_basic(ctx.author(),ctx).start().await;
+    GameSimulator::new(width.unwrap_or(3),height.unwrap_or(3),3,
+                       ctx.author(),ctx).start().await;
     Ok(())
 }
