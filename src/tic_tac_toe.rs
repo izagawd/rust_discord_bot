@@ -17,31 +17,35 @@ impl Display for XO {
         Debug::fmt(self, f)
     }
 }
-pub struct GameSimulator<'a,const width: usize, const height: usize> {
+pub struct GameSimulator<'a> {
+    width: i32,
+    height: i32,
     player_one: &'a User,
     player_two_user_id: Option<&'a User>,
-    board: [[Option<XO>; width ]; height ],
+    board: [[Option<XO>; 5 ]; 5 ],
     turn_taker: XO,
     number_to_win: u8,
     context: ContextToUse<'a>
 }
 
-impl<'a> GameSimulator<'a,3,3>{
-    fn new_basic(user: &'a User, context_to_use: ContextToUse<'a>) -> GameSimulator<'a,3,3>{
-        GameSimulator::new(*random_choice([XO::O,XO::X].iter()).unwrap(),
+impl<'a> GameSimulator<'a>{
+    fn new_basic(user: &'a User, context_to_use: ContextToUse<'a>) -> GameSimulator<'a>{
+        GameSimulator::new(3,3,*random_choice([XO::O,XO::X].iter()).unwrap(),
                            3,user,
                            context_to_use)
     }
 }
-impl<'a,const width: usize, const height: usize> GameSimulator<'a, width,height>{
+impl<'a,const width: usize, const height: usize> GameSimulator<'a>{
 
-    fn new(initial_turn_taker: XO, number_to_win: u8,
-           user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a,width,height>{
+    fn new(width: i32, height: i32, initial_turn_taker: XO, number_to_win: u8,
+           user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a>{
 
         GameSimulator{
+            width,
+            height,
             player_one: user,
             player_two_user_id: None,
-            board: [[None; width]; height ],
+            board: [[None; 5];  5],
             turn_taker: initial_turn_taker,
             number_to_win: number_to_win,
             context: ctx
@@ -105,8 +109,8 @@ impl<'a,const width: usize, const height: usize> GameSimulator<'a, width,height>
     }
     fn check_for_winner(&self) -> Option<XO>{
         for to_check in [XO::X, XO::O]{
-            for y in 0..self.board.len(){
-                for x in 0..self.board[y].len(){
+            for y in 0..self.height{
+                for x in 0..self.width{
                     if self.check_horizontally(x as u8,y as u8,to_check){
                         return Some(to_check)
                     } else if self.check_vertically(x as u8,y as u8,to_check){
