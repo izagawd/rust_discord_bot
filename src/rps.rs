@@ -1,9 +1,9 @@
-
-use std::fmt::Display;
+use std::error::Error;
+use std::fmt::{Debug, Display, Pointer};
 use std::str::FromStr;
-use poise::{CreateReply};
+use poise::{async_trait, CommandParameterChoice, CreateReply, PopArgument, SlashArgError, SlashArgument};
 use rand::{ Rng};
-use serenity::all::{Color,  CreateEmbed, CreateEmbedAuthor};
+use serenity::all::{Color, CommandInteraction, Context, CreateCommandOption, CreateEmbed, CreateEmbedAuthor, Message, ResolvedValue};
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 
 
@@ -13,11 +13,64 @@ pub enum RPSChoice {
     Paper,
     Scissors,
 }
+
 #[derive(Debug,Eq, PartialEq,Clone,Copy)]
 pub enum RPSActionResult{
     Win,
     Loss,
     Tie
+}
+#[async_trait]
+impl SlashArgument for RPSChoice {
+    async fn extract(ctx: &Context, interaction: &CommandInteraction, value: &ResolvedValue<'_>) -> Result<Self, SlashArgError> {
+        match value{
+            ResolvedValue::String(gotten) => {
+                match RPSChoice::from_str(gotten) {
+                    Ok(yay) => {
+                        return Ok(yay);
+                    }
+                    Err(_) => {
+                        Err(SlashArgError::new_command_structure_mismatch("Invalid choice"))
+                    }
+                }
+            }
+            _ =>return  Err(SlashArgError::new_command_structure_mismatch("Parse Issues"))
+        }
+    }
+
+    fn create(builder: CreateCommandOption) -> CreateCommandOption {
+        builder.add_string_choice("Rock", "rock")
+            .add_string_choice("Paper", "paper")
+            .add_string_choice("Scissors","scissors")
+    }
+
+}
+#[async_trait]
+impl<'a> PopArgument<'a> for RPSChoice {
+    async fn pop_from(args: &'a str, attachment_index: usize, ctx: &Context, msg: &Message) -> Result<(&'a str, usize, Self), (Box<dyn Error + Send + Sync>, Option<String>)> {
+        let mut parts = args.splitn(2, ' ');
+        let choice_str = parts.next().ok_or_else(|| {
+            (
+                Box::new(std::io::Error::new(std::io::ErrorKind::InvalidInput, "No arguments provided"))
+                    as Box<dyn std::error::Error + Send + Sync>,
+                Some("You must specify rock, paper, or scissors.".to_string()),
+            )
+        })?;
+
+        match choice_str.parse::<RPSChoice>() {
+            Ok(choice) => {
+                let remaining_args = parts.next().unwrap_or("");
+                Ok((remaining_args, attachment_index, choice))
+            }
+            Err(err) => {
+        
+                return Err((
+
+                Box::new(std::io::Error::new(std::io::ErrorKind::InvalidInput,"Please use rock, paper, or scissors.")),
+                Some(choice_str.to_string()),
+            ))},
+        }
+    }
 }
 impl RPSChoice {
     fn versus(self,other: RPSChoice) -> RPSActionResult{
@@ -70,29 +123,15 @@ static CUSTOM_DATA: AdditionalCommandDetails =
 showrr
 */
 pub async fn rps(
-    ctx: ContextToUse<'_>,#[description = "your rock paper scissors choice"] 
-    choice : String )-> CommandRetType {
+    ctx: ContextToUse<'_>,#[description = "Idk"] choice: RPSChoice )-> CommandRetType {
 
-    let player_choice : RPSChoice;
+
     let mut embed = CreateEmbed::new()
         .author(CreateEmbedAuthor::new(ctx.author().name.clone())
             .icon_url(ctx.author().avatar_url()
                 .unwrap_or_else(|| ctx.author().default_avatar_url())))
         .title("Rock, Paper, Scissors!!")
         .color(Color::BLUE);
-    match  RPSChoice::from_str(choice.as_str()) {
-        Ok(gotten) => {
-            player_choice = gotten;
-        }
-        Err(_) => {
-            embed = embed.title("Hmm").description("Invalid input");
-           _ =ctx.send(CreateReply{
-               embeds : vec![embed],
-               ..Default::default()
-           }).await;
-            return Ok(())
-        }
-    }
 
 
     let options = [ RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors];
@@ -102,14 +141,14 @@ pub async fn rps(
 
     let mut confront_text = "I winn >:)";
 
-    match   random_choice.versus(player_choice) {
+    match   random_choice.versus(choice) {
         RPSActionResult::Win => {}
         RPSActionResult::Loss => confront_text = "I.. lost..?",
         RPSActionResult::Tie => confront_text = "It's a tie. seems like we have the same power level"
     }
     embed = embed
         .description("I chose: **".to_owned() + random_choice.to_string().as_str()
-            + "**\nYou chose: **" + player_choice.to_string().as_str() + "**\n" + confront_text);
+            + "**\nYou chose: **" + choice.to_string().as_str() + "**\n" + confront_text);
 
     _ =ctx.send(CreateReply{
         embeds: vec![embed],
