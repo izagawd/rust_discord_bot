@@ -28,5 +28,5 @@ gen fn bruh() -> i32{
 
 #[tokio::main]
 async fn main() {
-    GameSimulator::default().start();
+    bot::start().await;
 }

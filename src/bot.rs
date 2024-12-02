@@ -50,7 +50,7 @@ pub async fn start() {
 
         .options(poise::FrameworkOptions {
             commands:  vec![crate::help::help(), crate::ping::ping(),
-            crate::rps::rps()],
+            crate::rps::rps(), crate::tic_tac_toe::tic_tac_toe()],
 
             prefix_options: poise::PrefixFrameworkOptions{
 
