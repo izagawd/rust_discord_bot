@@ -3,12 +3,8 @@
 #![feature(let_chains)]
 
 use std::any::Any;
-use std::collections::HashMap;
-use std::ffi::CString;
 use std::fmt::Display;
 use std::ops::Deref;
-use crate::basic_functions::random_choice;
-use crate::tic_tac_toe::GameSimulator;
 
 mod bot;
 mod help;
