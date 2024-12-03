@@ -18,8 +18,7 @@ impl Display for XO {
     }
 }
 pub struct GameSimulator<'a> {
-    width: i32,
-    height: i32,
+    area: i32,
     player_one: &'a User,
     player_two_user_id: Option<&'a User>,
     board: [[Option<XO>; 5 ]; 5 ],
@@ -31,12 +30,11 @@ pub struct GameSimulator<'a> {
 
 impl<'a> GameSimulator<'a>{
 
-    fn new(width: i32, height: i32,  number_to_win: u8,
+    fn new(area: i32, number_to_win: u8,
            user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a>{
 
         GameSimulator{
-            width,
-            height,
+            area,
             player_one: user,
             player_two_user_id: None,
             board: [[None; 5];  5],
@@ -103,8 +101,8 @@ impl<'a> GameSimulator<'a>{
     }
     fn check_for_winner(&self) -> Option<XO>{
         for to_check in [XO::X, XO::O]{
-            for y in 0..self.height{
-                for x in 0..self.width{
+            for y in 0..self.area{
+                for x in 0..self.area{
                     if self.check_horizontally(x as u8,y as u8,to_check){
                         return Some(to_check)
                     } else if self.check_vertically(x as u8,y as u8,to_check){
@@ -122,8 +120,8 @@ impl<'a> GameSimulator<'a>{
     }
     pub async fn display_battle_state(&self) {
         let mut to_work_with = String::new();
-        for i in self.board.iter().take(self.height as usize){
-            for j in i.iter().take(self.width as usize){
+        for i in self.board.iter().take(self.area as usize){
+            for j in i.iter().take(self.area as usize){
                 if let Some(gotten) = j{
                    to_work_with.push_str(&gotten.to_string());
                     to_work_with.push_str(" ");
@@ -200,9 +198,9 @@ static CUSTOM_DATA: AdditionalCommandDetails =
 Play tic tac toe with ur friend
 */
 pub async fn tic_tac_toe(
-    ctx: ContextToUse<'_>, width: Option<i32>, height: Option<i32>) -> CommandRetType {
+    ctx: ContextToUse<'_>, area: Option<i32>) -> CommandRetType {
 
-    GameSimulator::new(width.unwrap_or(3),height.unwrap_or(3),3,
-                       ctx.author(),ctx).start().await;
+    GameSimulator::new(area.unwrap_or(3), 3,
+                       ctx.author(), ctx).start().await;
     Ok(())
 }
