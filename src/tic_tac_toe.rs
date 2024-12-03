@@ -130,12 +130,9 @@ impl<'a> GameSimulator<'a>{
                 } else{
                     to_work_with.push_str("  ");
                 }
-
             }
             to_work_with.push_str("\n");
         }
-
-
         if(to_work_with.replace(" ","").replace("\n","").len() == 0){
             to_work_with = String::from("NOTHING")
         }
