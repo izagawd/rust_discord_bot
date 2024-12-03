@@ -24,14 +24,5 @@ mod basic_functions;
 
 #[tokio::main]
 async fn main() {
-    let gotten  = [1];
-    match random_choice(gotten.iter()) {
-        Ok(gotten) => {
-            println!("{}", gotten);
-        }
-        Err(za_err) => {
-            println!("{}", za_err);
-        }
-    } ;
 
 }
