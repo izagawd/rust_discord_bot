@@ -1,195 +1,41 @@
-use std::fmt::{Debug, Display, Formatter};
-use std::io;
-use std::io::{Error, Read};
-use std::task::Context;
-use poise::CreateReply;
-use serenity::all::{ChannelId, CreateEmbed, CreateEmbedAuthor, CreateMessage, User, UserId};
 use crate::basic_functions::random_choice;
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
+use poise::{PopArgument, SlashArgError, SlashArgument};
+use serenity::all::{CommandInteraction, CreateAttachment, CreateCommandOption, CreateEmbed, CreateMessage, Message, ResolvedValue, User};
+use std::fmt::{Debug, Display, Formatter};
+use std::io::Cursor;
+use std::mem::take;
+use std::str::FromStr;
+use image::{imageops, ImageFormat, Rgb, RgbaImage};
+use sea_orm::prelude::async_trait;
+use sea_orm::prelude::async_trait::async_trait;
+use serenity::all::colours::roles::GREEN;
+use serenity::builder::CreateEmbedAuthor;
+use serenity::futures::sink::Buffer;
+use crate::tic_tac_toe_simulator::GameSimulator;
 
 #[derive(PartialEq, Eq, Clone, Debug, Copy)]
 pub enum XO {
     X,
     O
 }
+
 impl Display for XO {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         Debug::fmt(self, f)
     }
 }
-pub struct GameSimulator<'a> {
-    area: i32,
-    player_one: &'a User,
-    player_two_user_id: Option<&'a User>,
-    board: [[Option<XO>; 5 ]; 5 ],
-    turn_taker: XO,
-    number_to_win: u8,
-    context: ContextToUse<'a>
+
+
+impl Display for XOArea {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Debug::fmt(self, f)
+    }
 }
-
-
-impl<'a> GameSimulator<'a>{
-
-    fn new(area: i32, number_to_win: u8,
-           user: &'a User, ctx: ContextToUse<'a>) -> GameSimulator<'a>{
-
-        GameSimulator{
-            area,
-            player_one: user,
-            player_two_user_id: None,
-            board: [[None; 5];  5],
-            turn_taker: *random_choice([XO::O,XO::X].iter()).unwrap(),
-            number_to_win: number_to_win,
-            context: ctx
-        }
-    }
-    fn check_horizontally(&self,x: u8, y: u8,to_check: XO) -> bool{
-        let mut count = 0u8;
-        while let Some(gotten_y) = self.board.get(y as usize)
-            && let Some(value) = gotten_y.get((x + count) as usize){
-            if count == self.number_to_win{
-               return true
-            }
-            if *value != Some(to_check){
-                return false;
-            } 
-            count += 1;
-        }
-        count == self.number_to_win
-    }
-    fn check_vertically(&self,x: u8, y: u8,to_check: XO) -> bool{
-        let mut count = 0u8;
-        while let Some(gotten_y) = self.board.get((y + count) as usize)
-            && let Some(value) = gotten_y.get(x as usize){
-            if count == self.number_to_win{
-                return true
-            }
-            if *value != Some(to_check){
-                return false;
-            }
-            count += 1;
-        }
-        count == self.number_to_win
-    }
-    fn check_diagonally_forward(&self,x: u8, y: u8,to_check: XO) -> bool{
-        let mut count = 0u8;
-        while let Some(gotten_y) = self.board.get((y + count) as usize)
-            && let Some(value) = gotten_y.get((x + count) as usize){
-            if count == self.number_to_win{
-                return true
-            }
-            if *value != Some(to_check){
-                return false;
-            }
-            count += 1;
-        }
-        count == self.number_to_win
-    }
-    fn check_diagonally_backward(&self,x: u8, y: u8,to_check: XO) -> bool{
-        let mut count = 0u8;
-        while let Some(gotten_y) = self.board.get((y + count) as usize)
-            && (x as i8) - (count as i8) >= 0 && let Some(value) = gotten_y.get((x - count) as usize){
-            if count == self.number_to_win{
-                return true
-            }
-            if *value != Some(to_check){
-                return false;
-            }
-            count += 1;
-        }
-        count == self.number_to_win
-    }
-    fn check_for_winner(&self) -> Option<XO>{
-        for to_check in [XO::X, XO::O]{
-            for y in 0..self.area{
-                for x in 0..self.area{
-                    if self.check_horizontally(x as u8,y as u8,to_check){
-                        return Some(to_check)
-                    } else if self.check_vertically(x as u8,y as u8,to_check){
-                        return Some(to_check)
-                    } else if self.check_diagonally_forward(x as u8,y as u8,to_check){
-                        return Some(to_check)
-                    } else if self.check_diagonally_backward(x as u8,y as u8,to_check){
-                        return Some(to_check)
-                    }
-                }
-            }
-        }
-
-        None
-    }
-    pub async fn display_battle_state(&self) {
-        let mut to_work_with = String::new();
-        for i in self.board.iter().take(self.area as usize){
-            for j in i.iter().take(self.area as usize){
-                if let Some(gotten) = j{
-                   to_work_with.push_str(&gotten.to_string());
-                    to_work_with.push_str(" ");
-                } else{
-                    to_work_with.push_str("  ");
-                }
-            }
-            to_work_with.push_str("\n");
-        }
-        if(to_work_with.replace(" ","").replace("\n","").len() == 0){
-            to_work_with = String::from("NOTHING")
-        }
-        self.context.channel_id().send_message(self.context.http(),
-                                                   CreateMessage::new()
-                                                       .content(to_work_with)).await.unwrap();
-    }
-
-
-    pub async fn start(&mut self) -> Option<XO>{
-        loop{
-        
-            self.display_battle_state().await;
-            if let Some(x) = self.check_for_winner(){
-                self.context
-                    .channel_id()
-                    .say(self.context.http(),
-                         format!("{} won!",x) )
-                    .await.unwrap();
-                ;
-
-                return Some(x);
-            }
-            self.context
-                .channel_id()
-                .say(self.context.http(),
-                     format!("{}'s turn",self.turn_taker.to_string())  )
-                .await.unwrap();
-            ;
-            let player_one = self.player_one.clone();
-            let message = self.context.channel_id()
-                .await_reply(self.context.serenity_context().shard.as_ref())
-                .filter(move |x| x.author == player_one)
-                .await.unwrap();
-            let mut input : String = message.content.clone();
-
-
-            let first = input.chars().nth(1).unwrap().to_digit(10).unwrap();
-            let second = input.chars().nth(0).unwrap().to_digit(10).unwrap();
-            if  self.board[first as usize][second as usize].is_none(){
-                self.board[first as usize][second as usize] = Some(self.turn_taker);
-            } else{
-                self.context
-                    .channel_id()
-                    .say(self.context.http(),
-                         "Spot already used" )
-                    .await.unwrap()
-                ;
-                continue
-            }
-
-            if self.turn_taker == XO::X{
-                self.turn_taker = XO::O;
-            } else {
-                self.turn_taker = XO::X;
-            }
-        }
-    }
-
+#[derive(Clone,Copy,PartialEq,Debug,Eq)]
+enum XOArea{
+    Three,
+    Four
 }
 static CUSTOM_DATA: AdditionalCommandDetails =
     AdditionalCommandDetails::new(CommandType::Game);
@@ -198,9 +44,91 @@ static CUSTOM_DATA: AdditionalCommandDetails =
 Play tic tac toe with ur friend
 */
 pub async fn tic_tac_toe(
-    ctx: ContextToUse<'_>, area: Option<i32>) -> CommandRetType {
+    ctx: ContextToUse<'_>, area: Option<XOArea>) -> CommandRetType {
 
-    GameSimulator::new(area.unwrap_or(3), 3,
+    let mut area_num: u8;
+    match area.unwrap_or(XOArea::Three) {
+        XOArea::Three => {
+            area_num = 3;
+        }
+        XOArea::Four => {
+            area_num = 4;
+        }
+    }
+    GameSimulator::new(area_num,
                        ctx.author(), ctx).start().await;
     Ok(())
+}
+impl FromStr for XOArea {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "three" => Ok(XOArea::Three),
+            "four" => Ok(XOArea::Four   ),
+            "3" => Ok(XOArea::Three),
+            "4" => Ok(XOArea::Four),
+            _ => Err(()),
+        }
+    }
+}
+#[async_trait::async_trait]
+impl<'a> PopArgument<'a> for XOArea{
+    async fn pop_from(args: &'a str, attachment_index: usize, ctx: &serenity::all::Context, msg: &Message) -> Result<(&'a str, usize, Self), (Box<dyn std::error::Error + Send + Sync>, Option<String>)> {
+        let mut parts = args.splitn(2, ' ');
+        let choice_str = parts.next().ok_or_else(|| {
+            (
+                Box::new(std::io::Error::new(std::io::ErrorKind::InvalidInput, "No arguments provided"))
+                    as Box<dyn std::error::Error + Send + Sync>,
+                Some("You must specify rock, paper, or scissors.".to_string()),
+            )
+        })?;
+
+        match choice_str.parse::<XOArea>() {
+            Ok(choice) => {
+                let remaining_args = parts.next().unwrap_or("");
+                Ok((remaining_args, attachment_index, choice))
+            }
+            Err(err) => {
+
+                return Err((
+
+                    Box::new(std::io::Error::new(std::io::ErrorKind::InvalidInput,"Please use rock, paper, or scissors.")),
+                    Some(choice_str.to_string()),
+                ))},
+        }
+    }
+}
+#[async_trait]
+impl SlashArgument for XOArea{
+    async fn extract(ctx: &serenity::all::Context, interaction: &CommandInteraction, value: &ResolvedValue<'_>) -> Result<Self, SlashArgError> {
+        match value{
+            ResolvedValue::String(gotten) => {
+                match XOArea::from_str(gotten) {
+                    Ok(yay) => {
+                        return Ok(yay);
+                    }
+                    Err(_) => {
+                        Err(SlashArgError::new_command_structure_mismatch("Invalid choice"))
+                    }
+                }
+            }
+            ResolvedValue::Integer(gotten) => {
+                match XOArea::from_str(gotten.to_string().as_str()) {
+                    Ok(yay) => {
+                        return Ok(yay);
+                    }
+                    Err(_) => {
+                        Err(SlashArgError::new_command_structure_mismatch("Invalid choice"))
+                    }
+                }
+            }
+            _ =>return  Err(SlashArgError::new_command_structure_mismatch("Parse Issues"))
+        }
+    }
+
+    fn create(builder: CreateCommandOption) -> CreateCommandOption {
+        builder.add_string_choice("Four", "four")
+            .add_string_choice("Three", "three")
+    }
 }
