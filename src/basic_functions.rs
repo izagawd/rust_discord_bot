@@ -1,6 +1,6 @@
-use std::sync::LazyLock;
-use ab_glyph::{Font, FontRef};
+use ab_glyph::FontRef;
 use rand::Rng;
+use std::sync::LazyLock;
 
 
 pub static GLOBAL_FONT : LazyLock<FontRef> = LazyLock::new(||{
