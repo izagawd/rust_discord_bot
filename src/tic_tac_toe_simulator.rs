@@ -1,18 +1,14 @@
-use std::cell::LazyCell;
-use std::fmt::format;
-use std::io::Cursor;
-use std::mem::take;
-use std::sync::LazyLock;
-use ab_glyph::PxScale;
-use image::{imageops, ImageBuffer, Rgb, Rgba, RgbaImage};
-use poise::{CreateReply, ReplyHandle};
-use serenity::all::{ActionRowComponent, Button, ButtonStyle, CreateActionRow, CreateAttachment, CreateButton, CreateEmbed, CreateEmbedAuthor, CreateMessage, EditMessage, Message, User};
-use serenity::all::ButtonStyle::{Danger, Success};
-use serenity::all::colours::roles::{GREEN, RED};
-use serenity::Error;
 use crate::basic_functions::{random_choice, GLOBAL_FONT};
 use crate::bot::ContextToUse;
 use crate::tic_tac_toe::XO;
+use ab_glyph::PxScale;
+use image::{Rgba, RgbaImage};
+use poise::CreateReply;
+use serenity::all::colours::roles::GREEN;
+use serenity::all::ButtonStyle::{Danger, Success};
+use serenity::all::{ButtonStyle, CreateActionRow, CreateAttachment, CreateButton, CreateEmbed, CreateEmbedAuthor, EditMessage, Message, User};
+use std::io::Cursor;
+use std::mem::take;
 
 pub struct GameSimulator<'a> {
 
