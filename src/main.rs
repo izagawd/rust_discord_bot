@@ -5,12 +5,11 @@
 
 use std::any::Any;
 use std::async_iter::AsyncIterator;
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
 use image::PixelWithColorType;
+use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::ops::{Add, Deref, Index};
-use sea_orm::{ActiveModelTrait, DeriveEntityModel, EntityTrait};
-use sea_orm::ActiveValue::Set;
 
 mod bot;
 mod functions{
@@ -28,6 +27,5 @@ mod commands{
 #[tokio::main]
 async fn main() {
 
- 
-    bot::start().await;
+
 }

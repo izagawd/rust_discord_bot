@@ -1,18 +1,11 @@
-
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
+use crate::tic_tac_toe_simulator::GameSimulator;
 use poise::{PopArgument, SlashArgError, SlashArgument};
-use serenity::all::{CommandInteraction, CreateAttachment, CreateCommandOption, CreateEmbed, CreateMessage, Message, ResolvedValue, User};
-use std::fmt::{Debug, Display, Formatter};
-use std::io::Cursor;
-use std::mem::take;
-use std::str::FromStr;
-use image::{imageops, ImageFormat, Rgb, RgbaImage};
 use sea_orm::prelude::async_trait;
 use sea_orm::prelude::async_trait::async_trait;
-use serenity::all::colours::roles::GREEN;
-use serenity::builder::CreateEmbedAuthor;
-use serenity::futures::sink::Buffer;
-use crate::tic_tac_toe_simulator::GameSimulator;
+use serenity::all::{CommandInteraction, CreateCommandOption, Message, ResolvedValue};
+use std::fmt::{Debug, Display, Formatter};
+use std::str::FromStr;
 
 #[derive(PartialEq, Eq, Clone, Debug, Copy)]
 pub enum XO {
