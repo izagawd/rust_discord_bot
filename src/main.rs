@@ -45,19 +45,5 @@ fn bruh<T>(input: T)  -> T where T : Add<T, Output = T> + Copy{
 async fn main() {
 
     bot::start().await;
-    return;
-    let mut imgbuf = RgbaImage::new(100,100);
 
-    let imgx = imgbuf.width();
-    let imgy = imgbuf.height();
-    // A redundant loop to demonstrate reading image data
-    for x in 0..imgx {
-        for y in 0..imgy {
-            let pixel = imgbuf.get_pixel_mut(x, y);
-            *pixel = image::Rgba([0,0,255,255]);
-        }
-    }
-
-    // Save the image as “fractal.png”, the format is deduced from the path
-    imgbuf.save("fractal.png").unwrap();
 }
