@@ -4,6 +4,7 @@ use std::str::FromStr;
 use poise::{async_trait, CommandParameterChoice, CreateReply, PopArgument, SlashArgError, SlashArgument};
 use rand::{ Rng};
 use serenity::all::{Color, CommandInteraction, Context, CreateCommandOption, CreateEmbed, CreateEmbedAuthor, Message, ResolvedValue};
+use crate::basic_functions::random_choice;
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 
 
@@ -134,9 +135,8 @@ pub async fn rps(
         .color(Color::BLUE);
 
 
-    let options = [ RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors];
-
-    let random_choice = options[rand::rng().random_range(0..options.len())];
+    let random_choice = random_choice([RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors].iter())
+        .expect("this usually should work");
 
 
     let mut confront_text = "I winn >:)";

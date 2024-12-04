@@ -25,4 +25,6 @@ mod tic_tac_toe_simulator;
 #[tokio::main]
 async fn main() {
 
+ 
+    bot::start().await;
 }
