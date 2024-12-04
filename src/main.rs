@@ -26,21 +26,9 @@ mod basic_functions;
 mod image_functions;
 mod tic_tac_toe_simulator;
 
-#[derive(Clone,Copy)]
-struct Goku {
-    power_level: i32
-}
-impl Add for Goku {
-    type Output = Goku;
 
-    fn add(self, rhs: Self) -> Self::Output {
-        Goku{power_level: self.power_level + rhs.power_level}
-    }
-}
 
-fn bruh<T>(input: T)  -> T where T : Add<T, Output = T> + Copy{
-    return input + input;
-}
+
 #[tokio::main]
 async fn main() {
 
