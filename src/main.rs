@@ -13,14 +13,17 @@ use sea_orm::{ActiveModelTrait, DeriveEntityModel, EntityTrait};
 use sea_orm::ActiveValue::Set;
 
 mod bot;
-mod help;
-mod ping;
-mod rps;
-mod tic_tac_toe;
-mod basic_functions;
-mod image_functions;
+mod functions{
+    pub mod basic_functions;
+    pub mod image_functions;
+}
 mod tic_tac_toe_simulator;
-
+mod commands{
+    pub mod help;
+    pub mod ping;
+    pub mod rps;
+    pub mod tic_tac_toe;
+}
 
 #[tokio::main]
 async fn main() {

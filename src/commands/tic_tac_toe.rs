@@ -1,4 +1,4 @@
-use crate::basic_functions::random_choice;
+
 use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 use poise::{PopArgument, SlashArgError, SlashArgument};
 use serenity::all::{CommandInteraction, CreateAttachment, CreateCommandOption, CreateEmbed, CreateMessage, Message, ResolvedValue, User};

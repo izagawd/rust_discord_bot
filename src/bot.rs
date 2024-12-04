@@ -5,7 +5,7 @@ use poise::async_trait;
 use serenity::all::{EventHandler, GatewayIntents};
 use serenity::Client;
 use serenity::model::error::Error;
-
+use crate::commands::help;
 
 pub type CommandRetType = Result<(), Error>;
 pub type ContextToUse<'a> = poise::Context<'a, (), Error>;
@@ -49,8 +49,8 @@ pub async fn start() {
 
 
         .options(poise::FrameworkOptions {
-            commands:  vec![crate::help::help(), crate::ping::ping(),
-            crate::rps::rps(), crate::tic_tac_toe::tic_tac_toe()],
+            commands:  vec![help::help(), crate::commands::ping::ping(),
+            crate::commands::rps::rps(), crate::commands::tic_tac_toe::tic_tac_toe()],
 
             prefix_options: poise::PrefixFrameworkOptions{
 

@@ -1,6 +1,4 @@
-use crate::basic_functions::{random_choice, GLOBAL_FONT};
-use crate::bot::ContextToUse;
-use crate::tic_tac_toe::XO;
+
 use ab_glyph::PxScale;
 use image::{Rgba, RgbaImage};
 use poise::CreateReply;
@@ -9,6 +7,9 @@ use serenity::all::ButtonStyle::{Danger, Success};
 use serenity::all::{ButtonStyle, CreateActionRow, CreateAttachment, CreateButton, CreateEmbed, CreateEmbedAuthor, EditMessage, Message, User};
 use std::io::Cursor;
 use std::mem::take;
+use crate::bot::ContextToUse;
+use crate::commands::tic_tac_toe::XO;
+use crate::functions::basic_functions::{random_choice, GLOBAL_FONT};
 
 pub struct GameSimulator<'a> {
 

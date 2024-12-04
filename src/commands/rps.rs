@@ -4,9 +4,9 @@ use std::str::FromStr;
 use poise::{async_trait, CommandParameterChoice, CreateReply, PopArgument, SlashArgError, SlashArgument};
 use rand::{ Rng};
 use serenity::all::{Color, CommandInteraction, Context, CreateCommandOption, CreateEmbed, CreateEmbedAuthor, Message, ResolvedValue};
-use crate::basic_functions::random_choice;
-use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
 
+use crate::bot::{AdditionalCommandDetails, CommandRetType, CommandType, ContextToUse};
+use crate::functions::basic_functions::random_choice;
 
 #[derive(Debug,Eq, PartialEq,Clone,Copy)]
 pub enum RPSChoice {
