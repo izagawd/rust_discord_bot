@@ -228,6 +228,13 @@ impl<'a> GameSimulator<'a>{
                 self.text_to_show.push_str(format!("{} won!",x).as_str());
                 self.display_battle_state().await;
                 return Some(x)
+            } else if self.board
+                .iter()
+                .take(self.area as usize)
+                .all(|x| x.iter().take(self.area as usize).all(|x| x.is_some())){
+                self.text_to_show.push_str(format!("No winner").as_str());
+                self.display_battle_state().await;
+                return None;
             }
             self.display_battle_state().await;
 
