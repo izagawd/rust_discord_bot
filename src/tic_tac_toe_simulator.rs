@@ -129,7 +129,7 @@ impl<'a> GameSimulator<'a>{
         if(self.text_to_show.len() == 0){
             self.text_to_show.push_str("NOTHING")
         }
-        let mut embed = CreateEmbed::new()
+        let embed = CreateEmbed::new()
             .author(CreateEmbedAuthor::from(self.player_one))
             .title("Tic Tac Toe!")
             .description(take(&mut self.text_to_show))
