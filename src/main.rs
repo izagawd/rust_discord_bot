@@ -5,6 +5,7 @@
 
 use std::any::Any;
 use std::async_iter::AsyncIterator;
+use std::cell::RefCell;
 use std::fmt::{Debug, Display};
 
 use image::PixelWithColorType;
@@ -17,6 +18,8 @@ mod functions{
     pub mod image_functions;
 }
 mod tic_tac_toe_simulator;
+mod character_model;
+
 mod commands{
     pub mod help;
     pub mod ping;
@@ -26,5 +29,8 @@ mod commands{
 
 #[tokio::main]
 async fn main() {
+    println!("{}",size_of::<RefCell<i64>>());
+    return;
     bot::start().await;
+
 }
