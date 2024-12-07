@@ -33,8 +33,7 @@ pub fn create_character_from(discriminator: i32) -> Result<Rc<dyn Character>,&'s
         Ok(success) => {
             let gotten_option_char =success
                 .iter()
-                .filter(move |x| x.character_discriminator() as i32 == discriminator)
-                .last();
+                .find(move |x|x.character_discriminator() as i32 == discriminator );
             match gotten_option_char {
                 None => { Err("Character not found") },
                 Some(gotten_char) => {
