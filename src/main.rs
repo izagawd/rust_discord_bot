@@ -3,7 +3,7 @@
 #![feature(let_chains)]
 #![feature(async_iterator)]
 
-use std::any::Any;
+use std::any::{Any, TypeId};
 use std::async_iter::AsyncIterator;
 use std::cell::RefCell;
 use std::fmt::{Debug, Display};
@@ -11,6 +11,7 @@ use std::fmt::{Debug, Display};
 use image::PixelWithColorType;
 use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::ops::{Add, Deref, Index};
+use crate::character_model::{create_character_from, register_character, Lily};
 
 mod bot;
 mod functions{
@@ -29,7 +30,13 @@ mod commands{
 
 #[tokio::main]
 async fn main() {
-    println!("{}",size_of::<RefCell<i64>>());
+    register_character::<Lily>();
+
+
+
+    let possible_lily = create_character_from(1).unwrap();
+
+    println!("{}",possible_lily.deref().type_id() ==  TypeId::of::<Lily>());
     return;
     bot::start().await;
 

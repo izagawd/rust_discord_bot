@@ -1,8 +1,10 @@
-use std::any::TypeId;
+use std::any::{Any, TypeId};
 use std::cell::{Cell, RefCell};
+use std::fs::read;
 use std::marker::PhantomData;
+use std::ops::Deref;
 use std::rc::Rc;
-use std::sync::LazyLock;
+use std::sync::{LazyLock, LockResult, RwLock};
 
 struct CharacterModel{
     id: i64,
@@ -11,7 +13,57 @@ struct CharacterModel{
 }
 
 
+static registered_characters: RwLock<Vec<Box<dyn CharacterRegisterer + Send + Sync>>> = RwLock::new(Vec::new());
+pub fn register_character<T: Character + 'static>() -> Result<(),&'static str>{
 
+    match   registered_characters.write(){
+        Ok(mut success) => {
+            let created_discriminator = T::new().discriminator();
+            success.push(Box::new(CharacterRegistererStruct::<T>{discriminator: created_discriminator,phantom_data: PhantomData{}}));
+            return Ok(());
+        }
+        Err(_) => {
+            return Err("Poison error has occured");
+        }
+    }
+
+
+}
+
+pub fn create_character_from(discriminator: i32) -> Result<Rc<dyn Character>,&'static str>{
+    match registered_characters.read() {
+        Ok(success) => {
+            let gotten_option_char =success
+                .iter()
+                .filter(move |x| x.character_discriminator() as i32 == discriminator)
+                .last();
+            match gotten_option_char {
+                None => { Err("Character not found") },
+                Some(gotten_char) => {
+                    return Ok(gotten_char.create_character())
+                }
+            }
+        }
+        Err(_) => { Err("Poison error has occured") }
+    }
+}
+trait CharacterRegisterer{
+    fn character_discriminator(&self) -> u32;
+    fn create_character(&self) -> Rc<dyn Character>;
+}
+struct CharacterRegistererStruct<T: Character + 'static>{
+    discriminator: u32,
+    phantom_data: PhantomData<fn() -> T>
+}
+impl<T: Character + 'static> CharacterRegisterer for CharacterRegistererStruct<T>{
+    fn character_discriminator(&self) -> u32 {
+        return self.discriminator;
+    }
+
+    fn create_character(&self) -> Rc<dyn Character>{
+       T::new()
+    }
+}
 
 struct CharacterData{
 
@@ -29,11 +81,14 @@ trait CharacterExt {
     fn set_health(&self, health: i32);
 
 }
-struct Lily{
+pub struct Lily{
     character_data: CharacterData
 }
 
 impl Character for Lily{
+    fn discriminator(&self) -> u32 {
+        1
+    }
     fn character_data(&self) -> &CharacterData {
         &self.character_data
     }
@@ -56,7 +111,8 @@ impl<T: Character> CharacterExt for T{
     }
 
 }
-trait Character{
+pub trait Character : Any{
+    fn discriminator(&self) -> u32;
     fn character_data(&self) -> &CharacterData;
     fn new() -> Rc<Self> where Self : Sized;
 }
