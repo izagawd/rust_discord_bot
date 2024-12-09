@@ -28,12 +28,12 @@ pub fn register_character<T: Character + 'static>() -> Result<(),&'static str>{
 
 }
 
-pub fn create_character_from(discriminator: i32) -> Result<Rc<dyn Character>,&'static str>{
+pub fn create_character_from(discriminator: u32) -> Result<Rc<dyn Character>,&'static str>{
     match registered_characters.read() {
         Ok(success) => {
             let gotten_option_char =success
                 .iter()
-                .find(move |x|x.character_discriminator() as i32 == discriminator );
+                .find(move |x|x.character_discriminator()  == discriminator );
             match gotten_option_char {
                 None => { Err("Character not found") },
                 Some(gotten_char) => {
