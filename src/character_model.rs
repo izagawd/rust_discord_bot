@@ -73,7 +73,7 @@ impl CharacterData{
         }
     }
 }
-trait CharacterExt {
+pub trait CharacterExt {
     fn get_health(&self) -> i32;
     fn set_health(&self, health: i32);
 
