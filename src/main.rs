@@ -3,7 +3,7 @@
 #![feature(let_chains)]
 #![feature(async_iterator)]
 #![feature(allocator_api)]
-
+#![feature(test)]
 use std::alloc::Global;
 use std::any::Any;
 use std::async_iter::AsyncIterator;
@@ -34,21 +34,8 @@ mod commands{
     pub mod tic_tac_toe;
 }
 
-#[inline(never)]
-fn do_shit() -> Box<dyn Any>{
-    let curr = Instant::now();
-    let boxed = Box::new([0u8;350]);
-    let some = Instant::now();
-
-
-    println!("{}",(some - curr).as_nanos());
-    boxed
-}
-
 #[tokio::main]
 async fn main() {
-    for i in 0..11000{
-        do_shit();
-    }
+
 
 }
