@@ -2,16 +2,22 @@
 #![feature(trait_upcasting)]
 #![feature(let_chains)]
 #![feature(async_iterator)]
+#![feature(allocator_api)]
 
-use std::any::{Any, TypeId};
+use std::alloc::Global;
+use std::any::Any;
 use std::async_iter::AsyncIterator;
-use std::cell::RefCell;
 use std::fmt::{Debug, Display};
 
 use image::PixelWithColorType;
 use sea_orm::{ActiveModelTrait, EntityTrait};
-use std::ops::{Add, Deref, Index};
-use crate::character_model::{create_character_from, register_character, Lily};
+use std::ops::{Add, Deref, DerefMut, Index};
+use std::rc::Rc;
+use std::sync::{LazyLock, OnceLock, RwLock};
+use imageproc::definitions::Clamp;
+use mimalloc::MiMalloc;
+use tokio::time::Instant;
+use crate::functions::basic_functions::random_choice;
 
 mod bot;
 mod functions{
@@ -28,16 +34,21 @@ mod commands{
     pub mod tic_tac_toe;
 }
 
+#[inline(never)]
+fn do_shit() -> Box<dyn Any>{
+    let curr = Instant::now();
+    let boxed = Box::new([0u8;350]);
+    let some = Instant::now();
+
+
+    println!("{}",(some - curr).as_nanos());
+    boxed
+}
+
 #[tokio::main]
 async fn main() {
-    register_character::<Lily>();
-
-
-
-    let possible_lily = create_character_from(1).unwrap();
-
-    println!("{}",possible_lily.deref().type_id() ==  TypeId::of::<Lily>());
-    return;
-    bot::start().await;
+    for i in 0..11000{
+        do_shit();
+    }
 
 }
