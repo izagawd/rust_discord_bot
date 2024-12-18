@@ -8,7 +8,6 @@ extern crate test;
 use image::PixelWithColorType;
 use imageproc::definitions::Clamp;
 use sea_orm::{ActiveModelTrait, EntityTrait};
-use serde::{Deserialize, Serialize};
 use std::any::Any;
 use std::async_iter::AsyncIterator;
 use std::fmt::{Debug, Display};
