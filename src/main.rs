@@ -4,20 +4,18 @@
 #![feature(async_iterator)]
 #![feature(allocator_api)]
 #![feature(test)]
-use std::alloc::Global;
+extern crate test;
+use image::PixelWithColorType;
+use imageproc::definitions::Clamp;
+use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::any::Any;
 use std::async_iter::AsyncIterator;
+use std::cell::{Cell, RefCell};
 use std::fmt::{Debug, Display};
-
-use image::PixelWithColorType;
-use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::ops::{Add, Deref, DerefMut, Index};
 use std::rc::Rc;
-use std::sync::{LazyLock, OnceLock, RwLock};
-use imageproc::definitions::Clamp;
-use mimalloc::MiMalloc;
-use tokio::time::Instant;
-use crate::functions::basic_functions::random_choice;
+use test::Bencher;
+use serde::{Deserialize, Serialize};
 
 mod bot;
 mod functions{
@@ -26,7 +24,6 @@ mod functions{
 }
 mod tic_tac_toe_simulator;
 mod character_model;
-
 mod commands{
     pub mod help;
     pub mod ping;
@@ -36,6 +33,5 @@ mod commands{
 
 #[tokio::main]
 async fn main() {
-
-
+    bot::start().await;
 }

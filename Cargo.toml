@@ -15,4 +15,3 @@ sea-orm = "1.1.2"
 image = { version = "0.25.5"}
 imageproc = "0.25.0"
 ab_glyph = "0.2.29"
-mimalloc = { version = "0.1.43", features = ["secure"] }
