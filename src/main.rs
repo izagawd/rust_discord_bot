@@ -10,6 +10,7 @@ use imageproc::definitions::Clamp;
 use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::any::Any;
 use std::async_iter::AsyncIterator;
+use std::cell::{Cell, RefCell};
 use std::fmt::{Debug, Display};
 use std::ops::{Add, Deref, DerefMut, Index};
 
@@ -26,8 +27,25 @@ mod commands{
     pub mod rps;
     pub mod tic_tac_toe;
 }
+trait Character{
+    fn name(&self) -> &'static str;
+    fn discriminator(&self) -> i32;
+}
+struct Lily;
+
+impl Character for Lily {
+    fn name(&self) -> &'static str {
+        "Lily"
+    }
+    fn discriminator(&self) -> i32{
+        4
+    }
+}
+
+
 
 #[tokio::main]
 async fn main() {
-    bot::start().await;
+    let bruh = Cell::new(5);
+    println!("{}",size_of::<RefCell<bool>>());
 }

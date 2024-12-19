@@ -42,7 +42,7 @@ impl<'a> GameSimulator<'a>{
             player_one: user,
             player_two_user_id: None,
             board: [[None; 4];  4],
-            turn_taker: *random_choice([XO::O,XO::X].iter()).unwrap(),
+            turn_taker: random_choice([XO::O,XO::X].into_iter()).unwrap(),
 
             context: ctx
         }
