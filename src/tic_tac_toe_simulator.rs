@@ -47,6 +47,7 @@ impl<'a> GameSimulator<'a>{
             context: ctx
         }
     }
+    #[inline(always)]
     fn check_horizontally(&self,x: u8, y: u8,to_check: XO) -> bool{
         let mut count = 0u8;
         while let Some(gotten_y) = self.board.get(y as usize)
@@ -61,6 +62,7 @@ impl<'a> GameSimulator<'a>{
         }
         count == Self::NUMBER_TO_WIN
     }
+    #[inline(always)]
     fn check_vertically(&self,x: u8, y: u8,to_check: XO) -> bool{
         let mut count = 0u8;
         while let Some(gotten_y) = self.board.get((y + count) as usize)
@@ -75,6 +77,7 @@ impl<'a> GameSimulator<'a>{
         }
         count == Self::NUMBER_TO_WIN
     }
+    #[inline(always)]
     fn check_diagonally_forward(&self,x: u8, y: u8,to_check: XO) -> bool{
         let mut count = 0u8;
         while let Some(gotten_y) = self.board.get((y + count) as usize)
@@ -89,6 +92,7 @@ impl<'a> GameSimulator<'a>{
         }
         count == Self::NUMBER_TO_WIN
     }
+    #[inline(always)]
     fn check_diagonally_backward(&self,x: u8, y: u8,to_check: XO) -> bool{
         let mut count = 0u8;
         while let Some(gotten_y) = self.board.get((y + count) as usize)
@@ -103,17 +107,18 @@ impl<'a> GameSimulator<'a>{
         }
         count == Self::NUMBER_TO_WIN
     }
+    #[inline(always)]
     fn check_for_winner(&self) -> Option<XO>{
         for to_check in [XO::X, XO::O]{
             for y in 0..self.area{
                 for x in 0..self.area{
-                    if self.check_horizontally(x as u8,y as u8,to_check){
+                    if self.check_horizontally(x, y, to_check){
                         return Some(to_check)
-                    } else if self.check_vertically(x as u8,y as u8,to_check){
+                    } else if self.check_vertically(x, y, to_check){
                         return Some(to_check)
-                    } else if self.check_diagonally_forward(x as u8,y as u8,to_check){
+                    } else if self.check_diagonally_forward(x, y, to_check){
                         return Some(to_check)
-                    } else if self.check_diagonally_backward(x as u8,y as u8,to_check){
+                    } else if self.check_diagonally_backward(x, y, to_check){
                         return Some(to_check)
                     }
                 }
