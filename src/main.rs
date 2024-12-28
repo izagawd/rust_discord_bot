@@ -29,23 +29,8 @@ mod commands{
     pub mod tic_tac_toe;
 }
 
-struct Hey{
-    kk: Cell<i32>,
-}
 
-impl Hey{
-
-    fn duplicate_kk(&self) {
-        self.kk.set(self.kk.get() *2);
-    }
-    fn get_kk(&self) -> i32 {
-        self.kk.get()
-    }
-}
 #[tokio::main]
 async fn main() {
-    let created = Rc::new(Hey{kk: Cell::new(1)});
-    created.duplicate_kk();
-    created.duplicate_kk();
-    print!("{}",created.get_kk());
+    bot::start().await;
 }
