@@ -7,8 +7,8 @@ static CUSTOM_DATA: AdditionalCommandDetails =
 showrr
 */
 pub async fn ping(
-    ctx: ContextToUse<'_>) -> CommandRetType {
-    ctx.say("Pong!").await.unwrap();
+    ctx: ContextToUse<'_>, text: String) -> CommandRetType {
+    _ = ctx.say(text).await;
 
 
     Ok(())

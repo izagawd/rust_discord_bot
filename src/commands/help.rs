@@ -69,6 +69,6 @@ pub async fn help(
         reply: true,
         ..Default::default()
     };
-    _ = ctx.send(reply).await;
+    ctx.send(reply).await.unwrap();
     Ok(())
 }
