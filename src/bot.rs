@@ -41,7 +41,7 @@ impl Default for AdditionalCommandDetails{
     }
 }
 pub async fn start() {
-    let token ="OTYxNDA1NTYzODgxNzg3Mzky.GsXd_v.rf36oVKhf-1xqZJN1p7a-ZPGcL5Dxnjs2awaow";
+    let token ="XXXX";
     // Set gateway intents, which decides what events the bot will be notified about
     let intents = GatewayIntents::all();
 
