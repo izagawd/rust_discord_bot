@@ -11,10 +11,10 @@ struct CharacterModel{
 }
 
 
-static registered_characters: RwLock<Vec<Box<dyn CharacterRegisterer + Send + Sync>>> = RwLock::new(Vec::new());
+static REGISTERED_CHARACTERS: RwLock<Vec<Box<dyn CharacterRegisterer + Send + Sync>>> = RwLock::new(Vec::new());
 pub fn register_character<T: Character + 'static>() -> Result<(),&'static str>{
 
-    match   registered_characters.write(){
+    match   REGISTERED_CHARACTERS.write(){
         Ok(mut success) => {
             let created_discriminator = T::new().discriminator();
             success.push(Box::new(CharacterRegistererStruct::<T>{discriminator: created_discriminator,phantom_data: PhantomData{}}));
@@ -29,7 +29,7 @@ pub fn register_character<T: Character + 'static>() -> Result<(),&'static str>{
 }
 
 pub fn create_character_from(discriminator: u32) -> Result<Rc<dyn Character>,&'static str>{
-    match registered_characters.read() {
+    match REGISTERED_CHARACTERS.read() {
         Ok(success) => {
             let gotten_option_char =success
                 .iter()

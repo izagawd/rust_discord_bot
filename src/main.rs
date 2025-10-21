@@ -1,19 +1,10 @@
-#![feature(gen_blocks)]
-#![feature(trait_upcasting)]
-#![feature(let_chains)]
-#![feature(async_iterator)]
-#![feature(allocator_api)]
-#![feature(test)]
-extern crate test;
 use image::PixelWithColorType;
 use imageproc::definitions::Clamp;
 use sea_orm::{ActiveModelTrait, EntityTrait};
 use std::any::Any;
-use std::async_iter::AsyncIterator;
-use std::cell::{Cell, RefCell};
+
 use std::fmt::{Debug, Display};
 use std::ops::{Add, Deref, DerefMut, Index};
-use std::rc::Rc;
 
 mod bot;
 mod functions{
