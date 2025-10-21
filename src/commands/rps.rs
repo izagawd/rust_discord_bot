@@ -135,7 +135,7 @@ pub async fn rps(
         .color(Color::BLUE);
 
 
-    let random_choice = random_choice([RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors].into_iter())
+    let random_choice = random_choice([RPSChoice::Rock, RPSChoice::Paper, RPSChoice::Scissors])
         .expect("this usually should work");
 
 

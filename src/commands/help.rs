@@ -25,7 +25,7 @@ pub async fn help(
         pub custom_data : &'a AdditionalCommandDetails,
     }
     static DEFAULT_ADD_COMMS: AdditionalCommandDetails = AdditionalCommandDetails::default();
-    let commands_name_descr_mapped = ctx
+    let commands_name_descr_mapped = &ctx
         .framework()
         .options()
         .commands
@@ -43,10 +43,10 @@ pub async fn help(
         .map(|x| x.custom_data.command_type)
         .collect::<Vec<_>>();
     available_comm_types.dedup();
-    let mut embed_to_make =CreateEmbed::new()
+    let mut embed_to_make = CreateEmbed::new()
         .title("Commands")
         .color(Colour::BLUE)
-        .author(CreateEmbedAuthor::new(ctx.author().name.clone())
+        .author(CreateEmbedAuthor::new(ctx.author().name.as_str())
             .icon_url(ctx.author().avatar_url()
                 .unwrap_or_else(|| ctx.author().default_avatar_url())));
     for i in available_comm_types {

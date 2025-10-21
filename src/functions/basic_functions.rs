@@ -8,16 +8,17 @@ pub static GLOBAL_FONT : LazyLock<FontRef> = LazyLock::new(||{
         .expect("Couldn't load font data")
 
 });
-pub fn random_choice<T>(options: impl Iterator<Item = T> + Clone) -> Result<T,&'static str>{
-    let count =options.clone().count();
+pub fn random_choice<T>(options: impl IntoIterator<Item=T, IntoIter: Iterator<Item=T> + Clone>) -> Result<T,&'static str>{
+    let as_iter = options.into_iter();
+    let count =  as_iter.clone().count();
     if count == 0{
        return  Err("Collection is empty")
     }
 
 
-    let chosen_index = rand::rng().random_range(0..count);
+    let chosen_index =  rand::rng().random_range(0..count);
     let mut index = 0;
-    for i in options {
+    for i in as_iter {
         if index == chosen_index {
             return Ok(i)
         }
