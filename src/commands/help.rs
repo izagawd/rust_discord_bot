@@ -21,7 +21,7 @@ pub async fn help(
 
     struct NamenDescr<'a>{
         pub name: &'a String,
-        pub description: &'a Option<String>,
+        pub description: Option<&'a String>,
         pub custom_data : &'a AdditionalCommandDetails,
     }
     static DEFAULT_ADD_COMMS: AdditionalCommandDetails = AdditionalCommandDetails::default();
@@ -32,7 +32,7 @@ pub async fn help(
         .iter()
         .map(|x| NamenDescr{
             name: &x.name,
-            description: &x.description,
+            description: (&x.description).as_ref(),
             custom_data: &x.custom_data
                 .downcast_ref::<AdditionalCommandDetails>()
                 .unwrap_or(&DEFAULT_ADD_COMMS)
@@ -55,14 +55,12 @@ pub async fn help(
             .clone()
             .filter(|x| x.custom_data.command_type == i)
             .map(|x|
-            x.name.clone() + &x.description.clone().map(|y| ": ".to_owned()+ &y)
-                .unwrap_or(String::new()))
+                format!("{}{}",x.name,x.description.map(|y| format!(": {y}")).unwrap_or(String::new())))
             .collect::<Vec<String>>();
 
         embed_to_make = embed_to_make
             .field(i.to_string(),commands_under.join("\n"),false);
     }
-
     let reply =CreateReply{
 
         embeds: vec![embed_to_make],
